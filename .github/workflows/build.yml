@@ -34,14 +34,18 @@ jobs:
         run: |
           python3 ci/apply_patch.py
 
-      - name: Build desktop
+      - name: Make gradlew executable
         working-directory: spd
-        run: ./gradlew desktop:dist --no-daemon
+        run: chmod +x gradlew
+
+      - name: Build desktop (distZip)
+        working-directory: spd
+        run: ./gradlew desktop:distZip --no-daemon
 
       - name: Upload desktop build
         uses: actions/upload-artifact@v4
         with:
           name: SPEX-Desktop-Build
           path: |
+            spd/desktop/build/distributions/*.zip
             spd/desktop/build/libs/*
-            spd/desktop/build/distributions/*
