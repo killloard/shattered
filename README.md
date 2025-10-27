@@ -7,7 +7,7 @@ This repository **automatically builds** your game on GitHub Actions:
 - Attempts minimal **code hook insertions**
 - Builds a **desktop** distribution with Gradle
 - Uploads a downloadable artifact (JAR/zip) to each workflow run
-
+ 
 ## Quick Start
 
 1. Create a **throwaway GitHub account** (for setup) and make a **new repo**.
