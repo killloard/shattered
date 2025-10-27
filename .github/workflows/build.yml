@@ -1,1 +1,47 @@
+name: Build Shattered Pixel Extraction
 
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout autobuild repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Fetch Shattered Pixel Dungeon
+        run: |
+          git clone --depth 1 https://github.com/00-Evan/shattered-pixel-dungeon spd
+          ls -la spd
+
+      - name: Unpack Extraction Patch
+        run: |
+          unzip -q ShatteredPixelExtraction_patch_v0.1.zip -d patch
+
+      - name: Copy patch into SPD core
+        run: |
+          rsync -a patch/core/ spd/core/
+
+      - name: Best-effort hook insertion
+        run: |
+          python3 ci/apply_patch.py
+
+      - name: Build desktop
+        working-directory: spd
+        run: ./gradlew desktop:dist --no-daemon
+
+      - name: Upload desktop build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SPEX-Desktop-Build
+          path: |
+            spd/desktop/build/libs/*
+            spd/desktop/build/distributions/*
