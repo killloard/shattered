@@ -1,4 +1,3 @@
-
 import os, re, sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1] / "spd"
@@ -22,16 +21,17 @@ def patch_file(path, find_pattern, insert_text, after=True):
     print(f"[PATCHED] {path}", flush=True)
     return True
 
-# 1) Initialize extraction config near game start
+
+# ✅ 1) Initialize extraction config inside init()
 patch_file(
     "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/ShatteredPixelDungeon.java",
-    r"public class ShatteredPixelDungeon.*?\{",
-    '\n    // SPEX: initialize extraction config\n    spextraction.ExtractionConfig.init();\n',
+    r"public static void init\(\)\s*\{",
+    '\n        // SPEX: initialize extraction config\n        spextraction.ExtractionConfig.init();\n',
     after=True
 )
 
-# 2) Show difficulty select before entering dungeon
-# Attempt insert in InterlevelScene (or scene that transitions into a new run)
+
+# ✅ 2) Show difficulty select before dungeon loads
 patch_file(
     "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/scenes/InterlevelScene.java",
     r"create\(\)\s*\{",
@@ -39,7 +39,8 @@ patch_file(
     after=True
 )
 
-# 3) Spawn portals after level generation (Level class or builder)
+
+# ✅ 3) Spawn portals after level generation
 patch_file(
     "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java",
     r"build\(\)\s*\{",
@@ -47,7 +48,8 @@ patch_file(
     after=True
 )
 
-# 4) Boss extract enable after boss chest creation
+
+# ✅ 4) Boss death enables extraction portal
 patch_file(
     "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Boss.java",
     r"die\([^\)]*\)\s*\{",
@@ -55,7 +57,8 @@ patch_file(
     after=True
 )
 
-# 5) Hardcore death handling (wipe inventory/equipment)
+
+# ✅ 5) Hardcore death wipes inventory
 patch_file(
     "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero.java",
     r"die\([^\)]*\)\s*\{",
